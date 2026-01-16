@@ -241,7 +241,7 @@ const AIProblemSolverGame = () => {
     const relevantData = allDataOptions.filter((d) => challenge.correctData.includes(d.id))
     const irrelevantData = allDataOptions.filter((d) => !challenge.correctData.includes(d.id))
 
-    const selectedIrrelevant = irrelevantData.sort(() => Math.random() - 0.5).slice(0, 2)
+    const selectedIrrelevant = irrelevantData.sort(() => Math.random() - 0.5).slice(0, 1)
 
     return [...relevantData, ...selectedIrrelevant].sort(() => Math.random() - 0.5)
   }
@@ -320,6 +320,42 @@ const AIProblemSolverGame = () => {
 
     setShowResult(true)
     setShowHint(false)
+  }
+
+  const getDetailedExplanation = () => {
+    const inputName = currentChallengeData.inputOptions.find((i) => i.id === currentChallengeData.correctInput)?.name
+    const modelName = currentChallengeData.modelOptions.find((m) => m.id === currentChallengeData.correctModel)?.name
+    const dataNames = currentChallengeData.correctData.map(
+      (d) => currentChallengeData.dataOptions.find((opt) => opt.id === d)?.name,
+    )
+
+    const selectedInputName = currentChallengeData.inputOptions.find((i) => i.id === selectedInput)?.name
+    const selectedModelName = currentChallengeData.modelOptions.find((m) => m.id === selectedModel)?.name
+
+    let whyCorrect = ""
+    let whyWrong = ""
+
+    if (selectedInput === currentChallengeData.correctInput) {
+      whyCorrect += `✓ ${selectedInputName} is the right input because this problem requires analyzing visual/numerical/textual information.`
+    } else {
+      whyWrong += `✗ ${selectedInputName} won't work for this problem. We need ${inputName} to solve it.`
+    }
+
+    if (selectedModel === currentChallengeData.correctModel) {
+      whyCorrect +=
+        whyCorrect && `\n✓ ${selectedModelName} is perfect because it specializes in understanding this type of data.`
+    } else {
+      whyWrong += whyWrong && `\n✗ ${selectedModelName} isn't the right tool. We need ${modelName} for this task.`
+    }
+
+    if (selectedData.length > 0 && selectedData.every((d) => currentChallengeData.correctData.includes(d))) {
+      const dataList = selectedData
+        .map((d) => currentChallengeData.dataOptions.find((opt) => opt.id === d)?.name)
+        .join(" and ")
+      whyCorrect += `\n✓ ${dataList} is the right training data because it contains real examples that help the AI learn to solve this specific problem.`
+    }
+
+    return { whyCorrect, whyWrong }
   }
 
   const nextChallenge = () => {
@@ -587,6 +623,16 @@ const AIProblemSolverGame = () => {
                 <div className="bg-white rounded-3xl p-5 mb-3 border-2 border-gray-200">
                   <p className="text-gray-700 font-semibold mb-2">Correct Pipeline:</p>
                   <p className="text-gray-800 leading-relaxed">{currentChallengeData.explanation}</p>
+                  {getDetailedExplanation().whyCorrect && (
+                    <div className="mt-4 pt-4 border-t border-gray-200">
+                      <p className="text-sm text-green-700 leading-relaxed">{getDetailedExplanation().whyCorrect}</p>
+                    </div>
+                  )}
+                  {getDetailedExplanation().whyWrong && (
+                    <div className="mt-2">
+                      <p className="text-sm text-red-700 leading-relaxed">{getDetailedExplanation().whyWrong}</p>
+                    </div>
+                  )}
                 </div>
                 <div className="bg-gradient-to-r from-cyan-50 to-blue-50 rounded-3xl p-5 border-2 border-cyan-300">
                   <p className="text-sm text-gray-700 leading-relaxed">
