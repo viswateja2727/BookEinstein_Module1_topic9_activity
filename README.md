@@ -1,5 +1,7 @@
 # AI problem solver game
 
+**Project URL:** [AI Problem Solver](https://v0-ai-problem-solver-game-one.vercel.app/) (click here to play)
+
 *Automatically synced with your [v0.app](https://v0.app) deployments*
 
 [![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-black?style=for-the-badge&logo=vercel)](https://vercel.com/mrviswa27-1387s-projects/v0-ai-problem-solver-game)
